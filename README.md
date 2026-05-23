@@ -46,7 +46,7 @@
 ![Assignments](student-assignmnets.png)
 
 ### 🧑‍🏫 Faculty Dashboard
-![Faculty](faculty-dashboard(2).png)
+![Faculty](faculty-dashboard.png)
 
 ### 🔔 Notifications
 ![Notifications](notifications.png)
