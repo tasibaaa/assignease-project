@@ -36,17 +36,17 @@
 ### 🔐 Login Page
 ![Login](login.png)
 
-### 🏠 Home / Dashboard
+### 🏠 Home 
 ![Home](home.png)
+
+### 🧑‍🏫 Faculty Dashboard
+![Faculty](faculty-dashboard.png)
 
 ### 🎓 Student Dashboard
 ![Student Dashboard](student-dashboard.png)
 
 ### 📚 Student Assignments
 ![Assignments](student-assignmnets.png)
-
-### 🧑‍🏫 Faculty Dashboard
-![Faculty](faculty-dashboard.png)
 
 ### 🔔 Notifications
 ![Notifications](notifications.png)
