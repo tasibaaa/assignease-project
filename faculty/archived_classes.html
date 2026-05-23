@@ -1,0 +1,20 @@
+@faculty_bp.route("/restore-class/<int:class_id>", methods=["POST"])
+@role_required("faculty")
+def restore_class(class_id):
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        UPDATE classes
+        SET status='active'
+        WHERE class_id=%s
+    """, (class_id,))
+
+    db.commit()
+    db.close()
+
+    flash("Class restored successfully.", "success")
+
+    return redirect("/faculty/classes")
+9️⃣ Result

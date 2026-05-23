@@ -1,0 +1,161 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+<!-- JOIN CLASS -->
+
+<div class="card-modern mb-4">
+
+<h5 class="fw-semibold mb-3">
+Join Class
+</h5>
+
+<form method="POST"
+action="{{ url_for('student_bp.join_class') }}"
+class="d-flex gap-2">
+
+<input
+type="text"
+name="class_code"
+placeholder="Enter class code"
+required
+class="form-control">
+
+<button class="btn btn-dark">
+
+Join
+
+</button>
+
+</form>
+
+</div>
+
+
+<!-- APPROVED CLASSES -->
+
+<div class="card-modern mb-4">
+
+<h5 class="fw-semibold mb-3">
+
+Approved Classes
+
+</h5>
+
+{% for class in approved_classes %}
+
+<div class="border-bottom py-2">
+
+<strong>
+
+{{ class.class_name }}
+
+</strong>
+
+<span class="text-muted small">
+
+({{ class.class_code }})
+
+</span>
+
+<a
+href="/student/class/{{ class.class_id }}"
+class="btn btn-sm btn-outline-primary float-end">
+
+Open
+
+</a>
+
+</div>
+
+{% else %}
+
+<p class="text-muted">
+
+No approved classes yet.
+
+</p>
+
+{% endfor %}
+
+</div>
+
+
+<!-- PENDING REQUESTS -->
+
+<div class="card-modern mb-4">
+
+<h5 class="fw-semibold mb-3">
+
+Pending Requests
+
+</h5>
+
+{% for class in pending_classes %}
+
+<div class="border-bottom py-2">
+
+{{ class.class_name }}
+
+<span class="badge bg-warning">
+
+Pending Approval
+
+</span>
+
+</div>
+
+{% else %}
+
+<p class="text-muted">
+
+No pending requests.
+
+</p>
+
+{% endfor %}
+
+</div>
+
+
+<!-- REJECTED REQUESTS -->
+
+<div class="card-modern">
+
+<h5 class="fw-semibold mb-3">
+
+Rejected Requests
+
+</h5>
+
+{% for class in rejected_classes %}
+
+<div class="border-bottom py-2">
+
+{{ class.class_name }}
+
+<span class="badge bg-danger">
+
+Rejected
+
+</span>
+
+</div>
+
+{% else %}
+
+<p class="text-muted">
+
+No rejected requests.
+
+</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

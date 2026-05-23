@@ -1,0 +1,220 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-header text-center">
+            <h2>Create Account</h2>
+            <p>Join AssignEase and start managing smarter</p>
+        </div>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data" id="signupForm" novalidate>
+
+            <!-- ROLE -->
+            <div class="mb-3">
+                <label class="form-label">Register As</label>
+                <select name="role" id="roleSelect" class="form-select" required>
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty</option>
+                </select>
+            </div>
+
+            <!-- NAME -->
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="name" id="nameInput" class="form-control" required>
+                <small class="text-danger" id="nameError"></small>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" id="emailInput" class="form-control" required>
+                <small class="text-danger" id="emailError"></small>
+            </div>
+
+            <!-- PHONE -->
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="text" name="phone" id="phoneInput"
+                       class="form-control"
+                       maxlength="10"
+                       required>
+                <small class="text-danger" id="phoneError"></small>
+            </div>
+
+            <!-- STUDENT FIELDS -->
+            <div id="studentFields" class="role-section">
+                <div class="mb-3">
+                    <label class="form-label">Enrollment Number</label>
+                    <input type="text" name="enrollment_no" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Course / Program</label>
+                    <input type="text" name="course" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Semester</label>
+                    <select name="semester" class="form-select">
+                        <option value="">Select Semester</option>
+                        {% for i in range(1,9) %}
+                        <option>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- FACULTY FIELDS -->
+            <div id="facultyFields" class="role-section">
+                <div class="mb-3">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" name="employee_id" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <input type="text" name="department" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Designation</label>
+                    <input type="text" name="designation" class="form-control">
+                </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="passwordInput"
+                           class="form-control" required>
+                </div>
+                <small class="text-danger" id="passwordError"></small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" name="confirm_password"
+                       id="confirmPassword"
+                       class="form-control"
+                       required>
+                <small class="text-danger" id="confirmError"></small>
+            </div>
+
+    
+
+            <button type="submit" class="btn btn-primary w-100">
+                Create Account
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script>
+
+// ===== ROLE TOGGLE =====
+const roleSelect = document.getElementById("roleSelect");
+const studentFields = document.getElementById("studentFields");
+const facultyFields = document.getElementById("facultyFields");
+
+function toggleRoleFields() {
+    if (roleSelect.value === "student") {
+        studentFields.style.display = "block";
+        facultyFields.style.display = "none";
+    } else {
+        studentFields.style.display = "none";
+        facultyFields.style.display = "block";
+    }
+}
+
+roleSelect.addEventListener("change", toggleRoleFields);
+toggleRoleFields(); // Run on load
+
+
+// ===== FIELD VALIDATIONS =====
+const nameInput = document.getElementById("nameInput");
+const phoneInput = document.getElementById("phoneInput");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const confirmPassword = document.getElementById("confirmPassword");
+
+const nameError = document.getElementById("nameError");
+const phoneError = document.getElementById("phoneError");
+const emailError = document.getElementById("emailError");
+const passwordError = document.getElementById("passwordError");
+const confirmError = document.getElementById("confirmError");
+
+
+// Name: letters only
+nameInput.addEventListener("input", function () {
+    const regex = /^[A-Za-z\s]+$/;
+    if (!regex.test(this.value)) {
+        nameError.textContent = "Only letters are allowed.";
+    } else {
+        nameError.textContent = "";
+    }
+});
+
+
+// Phone: numbers only, max 10
+phoneInput.addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, '');
+
+    if (this.value.length !== 10) {
+        phoneError.textContent = "Phone number must be 10 digits.";
+    } else {
+        phoneError.textContent = "";
+    }
+});
+
+
+// Email validation
+emailInput.addEventListener("input", function () {
+    const regex = /^[^@]+@[^@]+\.[^@]+$/;
+    if (!regex.test(this.value)) {
+        emailError.textContent = "Invalid email format.";
+    } else {
+        emailError.textContent = "";
+    }
+});
+
+
+// Password strength
+passwordInput.addEventListener("input", function () {
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (!regex.test(this.value)) {
+        passwordError.textContent =
+            "Min 8 chars, 1 uppercase, 1 number, 1 special char.";
+    } else {
+        passwordError.textContent = "";
+    }
+});
+
+
+// Confirm password match
+confirmPassword.addEventListener("input", function () {
+    if (this.value !== passwordInput.value) {
+        confirmError.textContent = "Passwords do not match.";
+    } else {
+        confirmError.textContent = "";
+    }
+});
+
+</script>
+
+{% endblock %}

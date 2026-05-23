@@ -1,0 +1,60 @@
+<footer class="app-footer">
+    <div class="container">
+
+        <div class="row gy-4 align-items-start">
+
+            <!-- BRAND -->
+            <div class="col-md-4">
+                <h5 class="footer-logo">AssignEase</h5>
+                <p class="footer-text">
+                    Smart academic workflow management system built
+                    for modern institutions.
+                </p>
+            </div>
+
+            <!-- LINKS -->
+            <div class="col-md-3">
+                <h6 class="footer-heading">Quick Links</h6>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/signup">Signup</a></li>
+                </ul>
+            </div>
+
+            <form class="footer-newsletter" id="newsletterForm">
+                <input type="email" id="newsletterEmail" placeholder="Enter your email" required>
+
+                <button type="submit">Subscribe</button>
+            </form>
+
+            <div id="subscribeMessage" class="subscribe-message">
+                ✓ Subscribed successfully!
+            </div>
+        </div>
+        <script>
+            document.getElementById("newsletterForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const message = document.getElementById("subscribeMessage");
+                const emailInput = document.getElementById("newsletterEmail");
+
+                if (emailInput.value.trim() !== "") {
+                    message.classList.add("show");
+                    emailInput.value = "";
+
+                    setTimeout(() => {
+                        message.classList.remove("show");
+                    }, 3000);
+                }
+            });
+        </script>
+
+        <hr class="footer-divider">
+
+        <div class="footer-bottom d-flex justify-content-between">
+            <span>© 2026 AssignEase. All rights reserved.</span>
+        </div>
+
+    </div>
+</footer>

@@ -1,0 +1,107 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+<a href="{{ url_for('faculty_bp.view_classes') }}" class="btn btn-outline-secondary btn-sm">
+    ← Back to Classes
+</a>
+<div class="content-wrapper">
+    <div class="card-modern p-4">
+
+        <h4 class="fw-semibold mb-4">Create Assignment</h4>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <!-- SELECT CLASS -->
+            <div class="mb-3">
+                <label class="form-label">Select Class *</label>
+                <select name="class_id" class="form-select" required>
+                    <option value="">-- Select Class --</option>
+                    {% for class in classes %}
+                    <option value="{{ class.class_id }}" {% if selected_class_id and
+                        selected_class_id|int==class.class_id %} selected {% endif %}>
+                        {{ class.class_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- TITLE -->
+            <div class="mb-3">
+                <label class="form-label">Title *</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Description
+                </label>
+                <textarea name="description" class="form-control" rows="4"
+                    placeholder="Enter assignment description (optional if uploading PDF)">
+                </textarea>
+            </div>
+
+            <div class="text-center my-3">
+                <strong>OR</strong>
+            </div>
+
+            <!-- QUESTION PDF UPLOAD -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Upload Question PDF
+                </label>
+                <input type="file" name="assignment_file" class="form-control" accept=".pdf">
+                <small class="text-muted">
+                    Upload PDF instead of writing description.
+                </small>
+            </div>
+
+            <!-- INSTRUCTION FILE UPLOAD -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Instruction File (Optional)
+                </label>
+                <input type="file" name="instruction_file" class="form-control">
+                <small class="text-muted">
+                    Optional additional instructions for students.
+                </small>
+            </div>
+
+            <!-- DEADLINE -->
+            <div class="mb-3">
+                <label class="form-label">Deadline *</label>
+                <input type="datetime-local" name="deadline" class="form-control" required>
+            </div>
+
+            <!-- TOTAL MARKS -->
+            <div class="mb-4">
+                <label class="form-label">Total Marks *</label>
+                <input type="number" name="total_score" class="form-control" min="1" required>
+            </div>
+            <div class="mb-3">
+                {% if selected_class_id %}
+
+                {% else %}
+
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-dark w-100">
+                Create Assignment
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

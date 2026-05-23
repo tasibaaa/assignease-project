@@ -1,0 +1,89 @@
+<div class="sidebar">
+
+    <div class="sidebar-header">
+        <h5 class="fw-semibold">AssignEase</h5>
+    </div>
+
+    <ul class="sidebar-menu">
+
+        {% if session.get('role') == 'student' %}
+
+        <li>
+            <a href="{{ url_for('student_bp.dashboard') }}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('student_bp.my_classes') }}">
+                <i class="bi bi-easel"></i> My Classes
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('student_bp.my_assignments') }}">
+                <i class="bi bi-file-earmark-text"></i> My Assignments
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('student_bp.notifications') }}">
+                <i class="bi bi-bell"></i> Notifications
+
+                {% if unread_notifications > 0 %}
+                <span class="badge bg-danger">
+                    {{ unread_notifications }}
+                </span>
+                {% endif %}
+
+            </a>
+        </li>
+
+        {% endif %}
+
+
+
+        {% if session.get('role') == 'faculty' %}
+
+        <li>
+            <a href="{{ url_for('faculty_bp.dashboard') }}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('faculty_bp.view_classes') }}">
+                <i class="bi bi-easel"></i> Classes
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('faculty_bp.all_assignments') }}">
+                <i class="bi bi-file-earmark-text"></i> Assignment
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('faculty_bp.notifications') }}">
+                <i class="bi bi-bell"></i> Notifications
+
+                {% if unread_notifications > 0 %}
+                <span class="badge bg-danger">
+                    {{ unread_notifications }}
+                </span>
+                {% endif %}
+
+            </a>
+        </li>
+
+        {% endif %}
+
+
+
+        <li>
+            <a href="{{ url_for('auth_bp.logout') }}" class="text-danger">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </li>
+
+    </ul>
+
+</div>

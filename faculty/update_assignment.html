@@ -1,0 +1,55 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('faculty_bp.view_class', class_id=assignment.class_id) }}"
+       class="btn btn-outline-secondary btn-sm">
+        ← Back to Class
+    </a>
+</div>
+<div class="card-modern">
+
+    <h4 class="fw-semibold mb-4">Update Assignment</h4>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text"
+                   name="title"
+                   value="{{ assignment.title }}"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description"
+                      class="form-control"
+                      required>{{ assignment.description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Deadline</label>
+            <input type="datetime-local"
+                   name="deadline"
+                   value="{{ assignment.deadline|replace(' ', 'T') }}"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Total Marks</label>
+            <input type="number"
+                   name="total_score"
+                   value="{{ assignment.total_score }}"
+                   class="form-control"
+                   required>
+        </div>
+
+        <button class="btn btn-primary">Update Assignment</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

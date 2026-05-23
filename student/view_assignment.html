@@ -1,0 +1,165 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<div class="card-modern mb-4">
+
+    <h4>{{ assignment.title }}</h4>
+    <p class="text-muted">Class: {{ assignment.class_name }}</p>
+
+    <!-- DEADLINE + COUNTDOWN -->
+    <p>
+        <strong>Deadline:</strong>
+        <span id="deadline" data-deadline="{{ assignment.deadline }}">
+            {{ assignment.deadline }}
+        </span>
+    </p>
+
+    <p>
+        <strong>Time Remaining:</strong>
+        <span id="countdown" class="fw-bold text-danger"></span>
+    </p>
+
+    {% if assignment.description %}
+        <p>{{ assignment.description }}</p>
+    {% endif %}
+
+    <!-- QUESTION PDF -->
+    {% if assignment.question_file %}
+        <a href="{{ url_for('student_bp.view_submission_file',
+                             filename=assignment.question_file) }}"
+           target="_blank"
+           class="btn btn-dark mb-3">
+            View Question PDF
+        </a>
+    {% endif %}
+
+</div>
+
+
+<!-- ================= SUBMIT SECTION ================= -->
+<div class="card-modern mb-4">
+    <h5>Submit Assignment</h5>
+
+    <form method="POST"
+          action="{{ url_for('student_bp.submit_assignment',
+                             assignment_id=assignment.assignment_id) }}"
+          enctype="multipart/form-data">
+
+        <input type="file"
+               name="file"
+               accept=".pdf"
+               required
+               class="form-control mb-3">
+
+        <button class="btn btn-dark">
+            Submit / Resubmit
+        </button>
+    </form>
+</div>
+
+
+<!-- ================= SUBMISSION HISTORY ================= -->
+<div class="card-modern">
+    <h5>Submission History</h5>
+
+    {% if submissions %}
+
+        {% for sub in submissions %}
+
+        <div class="border rounded p-3 mb-3">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    <strong>Submitted At:</strong>
+                    {{ sub.submitted_at }}
+                </div>
+
+                <div>
+                    {% if sub.status == "late_submission" %}
+                        <span class="badge bg-danger">Late Submission</span>
+                    {% elif sub.status == "resubmission_required" %}
+                        <span class="badge bg-warning text-dark">Resubmission Required</span>
+                    {% elif sub.status == "graded" %}
+                        <span class="badge bg-success">Graded</span>
+                    {% else %}
+                        <span class="badge bg-dark">Submitted</span>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- 🔥 FIXED FILE LINK -->
+            <div class="mt-2">
+                <a href="{{ url_for('student_bp.view_submission_file',
+                                     filename=sub.file_name) }}"
+                   target="_blank"
+                   class="btn btn-outline-dark btn-sm">
+                    View Submitted File
+                </a>
+            </div>
+
+            {% if sub.marks is not none %}
+            <div class="mt-3">
+                <p><strong>Marks:</strong> {{ sub.marks }}</p>
+            </div>
+            {% endif %}
+
+            {% if sub.feedback %}
+            <div>
+                <p><strong>Feedback:</strong></p>
+                <p class="text-muted">{{ sub.feedback }}</p>
+            </div>
+            {% endif %}
+
+            {% if sub.annotated_file %}
+            <div class="mt-2">
+                <a href="{{ url_for('student_bp.view_submission_file',
+                                     filename=sub.annotated_file) }}"
+                   target="_blank"
+                   class="btn btn-outline-primary btn-sm">
+                    View Annotated File
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+        <p class="text-muted">No submissions yet.</p>
+    {% endif %}
+</div>
+
+
+<!-- ================= COUNTDOWN SCRIPT ================= -->
+<script>
+const deadlineElement = document.getElementById("deadline");
+const countdown = document.getElementById("countdown");
+
+const deadline = new Date(deadlineElement.dataset.deadline);
+
+function updateCountdown() {
+    const now = new Date();
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+        countdown.innerHTML = "Deadline Passed";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdown.innerHTML =
+        days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+{% endblock %}

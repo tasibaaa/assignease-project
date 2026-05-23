@@ -1,0 +1,467 @@
+/* ================= RESET ================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Inter",sans-serif;
+background:#f3f7f4;
+color:#1f2933;
+}
+
+/* ================= COLOR SYSTEM ================= */
+
+:root{
+
+--green-dark:#1f4d3b;
+--green:#2f6f54;
+--sage:#e7f0ea;
+
+--text:#1f2933;
+--muted:#6b7280;
+
+--border:#e6ebe7;
+
+--radius:14px;
+
+}
+
+/* ================= LINKS ================= */
+
+a{
+text-decoration:none;
+}
+
+/* ================= DASHBOARD LAYOUT ================= */
+
+.dashboard-container{
+display:flex;
+min-height:100vh;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+
+width:250px;
+
+background:var(--green-dark);
+
+color:white;
+
+padding:30px 20px;
+
+display:flex;
+flex-direction:column;
+
+}
+
+.sidebar a{
+
+display:block;
+
+padding:12px 14px;
+
+border-radius:10px;
+
+color:#cfe2d8;
+
+margin-bottom:6px;
+
+transition:0.2s;
+
+}
+
+.sidebar a:hover{
+
+background:rgba(255,255,255,0.08);
+
+color:white;
+
+}
+
+.sidebar a.active{
+
+background:white;
+color:var(--green-dark);
+
+font-weight:500;
+
+}
+
+/* ================= CONTENT ================= */
+
+.dashboard-content{
+
+flex:1;
+
+display:flex;
+flex-direction:column;
+
+}
+
+.topbar{
+
+height:65px;
+
+background:white;
+
+border-bottom:1px solid var(--border);
+
+display:flex;
+align-items:center;
+
+padding:0 30px;
+
+}
+
+.content-wrapper{
+
+padding:30px;
+
+}
+
+/* ================= CARD SYSTEM ================= */
+
+.card-modern{
+
+background:white;
+
+border-radius:var(--radius);
+
+border:1px solid var(--border);
+
+padding:24px;
+
+box-shadow:0 6px 16px rgba(0,0,0,0.04);
+
+transition:0.2s;
+
+}
+
+.card-modern:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 14px 30px rgba(0,0,0,0.08);
+
+}
+
+/* ================= STAT CARDS ================= */
+
+.stat-card{
+
+text-align:center;
+
+padding:24px;
+
+border-radius:var(--radius);
+
+border:1px solid var(--border);
+
+background:white;
+
+}
+
+.stat-card h6{
+
+color:var(--muted);
+
+font-size:13px;
+
+margin-bottom:6px;
+
+}
+
+.stat-card h3{
+
+font-size:28px;
+
+font-weight:600;
+
+color:var(--green-dark);
+
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-primary{
+
+background:var(--green);
+
+border:none;
+
+border-radius:10px;
+
+padding:10px 18px;
+
+font-weight:500;
+
+color:white;
+
+}
+
+.btn-primary:hover{
+
+background:var(--green-dark);
+
+}
+
+.btn-outline-dark{
+
+border-radius:10px;
+
+}
+
+/* ================= FORM ================= */
+
+.form-control,
+.form-select{
+
+border-radius:10px;
+
+border:1px solid var(--border);
+
+padding:10px 12px;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+border-color:var(--green);
+
+box-shadow:0 0 0 2px rgba(47,111,84,0.15);
+
+}
+
+/* ================= HERO SECTION ================= */
+
+.hero-modern{
+
+padding:100px 0;
+
+background:white;
+
+border-bottom:1px solid var(--border);
+
+}
+
+.hero-title{
+
+font-size:52px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+}
+
+.hero-subtitle{
+
+font-size:18px;
+
+color:var(--muted);
+
+margin-bottom:30px;
+
+}
+
+/* ================= FEATURES ================= */
+
+.features-section{
+
+padding:90px 0;
+
+background:#f6faf7;
+
+}
+
+.feature-card-modern{
+
+background:white;
+
+border-radius:14px;
+
+padding:30px;
+
+border:1px solid var(--border);
+
+transition:0.2s;
+
+}
+
+.feature-card-modern:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 12px 25px rgba(0,0,0,0.08);
+
+}
+
+/* ================= PROGRESS BAR ================= */
+
+.progress{
+
+height:10px;
+
+border-radius:10px;
+
+background:#e8f1ec;
+
+}
+
+.progress-bar{
+
+background:var(--green);
+
+}
+
+/* ================= BADGES ================= */
+
+.badge{
+
+font-size:12px;
+
+padding:5px 10px;
+
+border-radius:20px;
+
+}
+
+.bg-success{
+
+background:#e6f4ea !important;
+
+color:#1f6b45;
+
+}
+
+.bg-danger{
+
+background:#fde8e8 !important;
+
+color:#991b1b;
+
+}
+
+/* ================= AUTH PAGE ================= */
+
+.auth-page{
+
+min-height:100vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:
+
+radial-gradient(circle at 20% 20%, rgba(47,111,84,0.1), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(31,77,59,0.08), transparent 40%);
+
+}
+
+.auth-card{
+
+width:420px;
+
+background:white;
+
+padding:50px;
+
+border-radius:18px;
+
+box-shadow:0 30px 60px rgba(0,0,0,0.1);
+
+}
+
+/* ================= FOOTER ================= */
+
+.app-footer{
+
+background:var(--green-dark);
+
+color:#cfe2d8;
+
+padding:60px 0;
+
+margin-top:80px;
+
+}
+
+.footer-links a{
+
+color:#cfe2d8;
+
+}
+
+.footer-links a:hover{
+
+color:white;
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+.sidebar{
+width:200px;
+}
+
+.content-wrapper{
+padding:20px;
+}
+
+.hero-title{
+font-size:38px;
+}
+
+}
+.hero-card{
+background:white;
+border-radius:16px;
+padding:28px;
+border:1px solid #e5ebe7;
+box-shadow:0 20px 40px rgba(0,0,0,0.08);
+max-width:420px;
+margin-left:auto;
+}
+
+.hero-card-header{
+font-weight:600;
+margin-bottom:16px;
+font-size:18px;
+}
+
+.hero-card-body{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.mock-stat{
+display:flex;
+justify-content:space-between;
+font-size:15px;
+padding-bottom:6px;
+border-bottom:1px solid #eef2ef;
+}
+
+.mock-stat strong{
+font-weight:600;
+}
+
+.mock-chart{
+height:80px;
+background:linear-gradient(90deg,#2f6f54,#3c8a6a);
+border-radius:8px;
+margin-top:12px;
+opacity:0.15;
+}

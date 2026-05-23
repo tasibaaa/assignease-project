@@ -1,0 +1,239 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<style>
+    .dashboard-section {
+        animation: fadeUp 0.7s ease forwards;
+        opacity: 0;
+    }
+
+    .dashboard-section:nth-child(1) {
+        animation-delay: 0.05s;
+    }
+
+    .dashboard-section:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .dashboard-section:nth-child(3) {
+        animation-delay: 0.25s;
+    }
+
+    .dashboard-section:nth-child(4) {
+        animation-delay: 0.35s;
+    }
+
+    @keyframes fadeUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .premium-card {
+        border-radius: 18px;
+        padding: 25px;
+        background: linear-gradient(145deg, #ffffff, #f3f4f6);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+        transition: 0.3s ease;
+    }
+
+    .premium-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-card canvas {
+        animation: fadeUp 1s ease forwards;
+        width: 100% !important;
+        max-height: 320px;
+    }
+</style>
+
+<div class="content-wrapper">
+
+    <!-- ================= STATS ================= -->
+    <div class="row g-4 mb-5 dashboard-section">
+
+        <div class="col-md-3">
+            <div class="premium-card text-center">
+                <small class="text-muted">Total Classes</small>
+                <h2 class="fw-bold mt-2">{{ total_classes or 0 }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="premium-card text-center">
+                <small class="text-muted">Total Assignments</small>
+                <h2 class="fw-bold mt-2">{{ total_assignments or 0 }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="premium-card text-center">
+                <small class="text-muted">Total Students</small>
+                <h2 class="fw-bold mt-2">{{ total_students or 0 }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="premium-card text-center">
+                <small class="text-muted">Pending Grading</small>
+                <h2 class="fw-bold mt-2 text-danger">{{ pending or 0 }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= CHARTS ================= -->
+    <div class="row g-4 mb-5 dashboard-section">
+
+        <!-- Submission Trend (larger) -->
+        <div class="col-md-8">
+            <div class="premium-card chart-card">
+                <h5 class="fw-semibold mb-3">Submission Trend</h5>
+                <canvas id="submissionTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Plagiarism Distribution (compact) -->
+        <div class="col-md-4">
+            <div class="premium-card chart-card">
+                <h5 class="fw-semibold mb-3">Plagiarism Distribution</h5>
+                <canvas id="plagiarismChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= RECENT ACTIVITY ================= -->
+    <div class="premium-card dashboard-section">
+        <h5 class="fw-semibold mb-3">Recent Activity</h5>
+
+        {% if recent_submissions %}
+        {% for item in recent_submissions %}
+        <div class="border-bottom py-2">
+            <strong>{{ item.name }}</strong>
+            submitted
+            <strong>{{ item.title }}</strong>
+            <br>
+            <span class="text-muted small">
+                {{ item.submitted_at }}
+            </span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted">No recent activity.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- ================= CHARTS SCRIPT ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- backend must pass submission_trend (list of {day, total}) and plagiarism_data (dict with low, medium, high) -->
+<script id="trend-data" type="application/json">
+{{ submission_trend | default([]) | tojson }}
+</script>
+
+<script id="plagiarism-data" type="application/json">
+{{ plagiarism_data | default({}) | tojson }}
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const trendData = JSON.parse(document.getElementById("trend-data").textContent || "[]");
+        const plagiarismData = JSON.parse(document.getElementById("plagiarism-data").textContent || "{}");
+
+        /* ---------- Submission Trend (line) ---------- */
+        if (Array.isArray(trendData) && trendData.length > 0) {
+            // ensure readable labels (if day is ISO date, it's fine)
+            const labels = trendData.map(item => item.day);
+            const values = trendData.map(item => parseInt(item.total, 10) || 0);
+
+            new Chart(document.getElementById('submissionTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Submissions",
+                        data: values,
+                        borderColor: "#2c7be5",
+                        backgroundColor: "rgba(44,123,229,0.12)",
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 900 },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { display: true, title: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        } else {
+            // if no data, draw an empty chart with a message-like look
+            const ctx = document.getElementById('submissionTrendChart').getContext('2d');
+            ctx.canvas.height = 220;
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillStyle = '#999';
+            ctx.font = '14px Arial';
+            ctx.fillText('No submission trend data available', 20, 40);
+        }
+
+        /* ---------- Plagiarism Distribution (doughnut) ---------- */
+        const pLow = parseInt(plagiarismData.low, 10) || 0;
+        const pMed = parseInt(plagiarismData.medium, 10) || 0;
+        const pHigh = parseInt(plagiarismData.high, 10) || 0;
+
+        new Chart(document.getElementById('plagiarismChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ["Low (<40%)", "Medium (40-69%)", "High (70%+)"],
+                datasets: [{
+                    data: [pLow, pMed, pHigh],
+                    backgroundColor: ["#28a745", "#ffc107", "#dc3545"],
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "65%",
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                return label + ': ' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<div class="content-wrapper">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-semibold">Assignments</h4>
+
+        <a href="/faculty/create-assignment" class="btn btn-dark">
+            + Create Assignment
+        </a>
+    </div>
+
+
+    <!-- SEARCH + FILTER FORM -->
+    <div class="card-modern mb-4">
+
+        <form method="GET" action="/faculty/all-assignments">
+
+            <div class="row g-3 align-items-center">
+
+                <div class="col-md-5">
+                    <input type="text"
+                           name="search"
+                           id="searchInput"
+                           value="{{ search or '' }}"
+                           placeholder="Search by title..."
+                           class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <select name="class_id"
+                            id="classFilter"
+                            class="form-select">
+
+                        <option value="">
+                            All Classes
+                        </option>
+
+                        {% for class in classes %}
+                        <option value="{{ class.class_id }}"
+                            {% if class_filter|string == class.class_id|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ class.class_name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex gap-2">
+
+                    <button class="btn btn-dark">
+                        Filter
+                    </button>
+
+                    <a href="/faculty/all-assignments"
+                       class="btn btn-outline-secondary">
+                        Reset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ASSIGNMENT LIST -->
+    <div id="assignmentList">
+
+        {% for assignment in assignments %}
+
+        <div class="card-modern mb-3 assignment-card"
+             data-title="{{ assignment.title|lower }}"
+             data-class="{{ assignment.class_name|lower }}">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <!-- LEFT SIDE -->
+                <div>
+
+                    <h6 class="mb-1 fw-semibold">
+
+                        {{ assignment.title }}
+
+                        {% if assignment.deadline < now() %}
+                            <span class="badge bg-danger ms-2">
+                                Closed
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success ms-2">
+                                Active
+                            </span>
+                        {% endif %}
+
+                    </h6>
+
+                    <p class="text-muted mb-1 small">
+                        Class: {{ assignment.class_name }}
+                    </p>
+
+                    <p class="mb-0 small">
+                        Deadline: {{ assignment.deadline }}
+                    </p>
+
+                </div>
+
+
+                <!-- RIGHT SIDE BUTTONS -->
+                <div class="d-flex gap-2">
+
+                    <a href="/faculty/submissions/{{ assignment.assignment_id }}"
+                       class="btn btn-outline-dark btn-sm">
+                        Submissions
+                    </a>
+
+                    <a href="/faculty/update-assignment/{{ assignment.assignment_id }}"
+                       class="btn btn-outline-primary btn-sm">
+                        Edit
+                    </a>
+
+                    <form method="POST"
+                          action="/faculty/delete-assignment/{{ assignment.assignment_id }}"
+                          onsubmit="return confirm('Delete this assignment?');">
+
+                        <button class="btn btn-outline-danger btn-sm">
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="card-modern text-center p-4">
+            <p class="text-muted mb-0">
+                No assignments created yet.
+            </p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+
+<!-- CLIENT SIDE FILTER -->
+<script>
+
+const searchInput = document.getElementById("searchInput");
+const classFilter = document.getElementById("classFilter");
+const cards = document.querySelectorAll(".assignment-card");
+
+function filterAssignments() {
+
+    const searchValue = searchInput.value.toLowerCase();
+    const classValue = classFilter.options[classFilter.selectedIndex].text.toLowerCase();
+
+    cards.forEach(card => {
+
+        const title = card.dataset.title;
+        const className = card.dataset.class;
+
+        const matchesSearch = title.includes(searchValue);
+        const matchesClass = classValue === "all classes" || className === classValue;
+
+        card.style.display = (matchesSearch && matchesClass)
+            ? "block"
+            : "none";
+
+    });
+
+}
+
+searchInput.addEventListener("input", filterAssignments);
+classFilter.addEventListener("change", filterAssignments);
+
+</script>
+
+{% endblock %}

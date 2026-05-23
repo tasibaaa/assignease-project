@@ -1,0 +1,378 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <a href="{{ url_for('faculty_bp.view_classes') }}"
+       class="btn btn-outline-secondary btn-sm">
+
+        <i class="bi bi-arrow-left"></i> Back to Classes
+
+    </a>
+
+</div>
+
+
+<div class="content-wrapper">
+
+
+<!-- ================= CLASS HEADER ================= -->
+
+<div class="card-modern mb-4">
+
+    <h4 class="fw-semibold">
+
+        {{ class_data.class_name }}
+
+    </h4>
+
+    <p class="text-muted">
+
+        Class Code: {{ class_data.class_code }}
+
+    </p>
+
+    <a href="{{ url_for('faculty_bp.create_assignment',
+                        class_id=class_data.class_id) }}"
+       class="btn btn-primary btn-sm">
+
+        Create Assignment
+
+    </a>
+
+</div>
+
+
+<!-- ================= ENROLL STUDENT ================= -->
+
+<div class="card-modern mb-4">
+
+    <h5 class="fw-semibold mb-3">
+
+        Enroll Student
+
+    </h5>
+
+    <form method="POST"
+          action="/faculty/enroll-student/{{ class_data.class_id }}"
+          class="d-flex gap-2">
+
+        <input
+        type="email"
+        name="student_email"
+        placeholder="Enter student email"
+        required
+        class="form-control">
+
+        <button class="btn btn-dark">
+
+            Enroll
+
+        </button>
+
+    </form>
+
+</div>
+<!-- ================= PENDING JOIN REQUESTS ================= -->
+
+{% if pending_requests %}
+
+<div class="card-modern mb-4">
+
+<h5 class="fw-semibold mb-3">
+
+Pending Join Requests
+<span class="badge bg-warning text-dark ms-2">
+{{ pending_requests|length }}
+</span>
+
+</h5>
+
+{% for student in pending_requests %}
+
+<div class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+<div>
+<strong>{{ student.name }}</strong>
+<div class="text-muted small">{{ student.email }}</div>
+</div>
+
+<div class="d-flex gap-2">
+
+<form method="POST"
+action="{{ url_for('faculty_bp.approve_student',
+class_id=class_data.class_id,
+student_id=student.user_id) }}">
+
+<button class="btn btn-sm btn-success">
+
+Approve
+
+</button>
+
+</form>
+
+
+<form method="POST"
+action="{{ url_for('faculty_bp.reject_student',
+class_id=class_data.class_id,
+student_id=student.user_id) }}">
+
+<button class="btn btn-sm btn-danger">
+
+Reject
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+<!-- ================= ENROLLED STUDENTS ================= -->
+
+<div class="card-modern mb-4">
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+
+<h5 class="fw-semibold">
+
+    Enrolled Students
+
+    <span class="badge bg-dark ms-2">
+
+        Page {{ page }} / {{ total_pages }}
+
+    </span>
+
+</h5>
+
+
+<!-- SHOW ALL BUTTON -->
+
+<div>
+
+{% if show_all %}
+
+<a href="{{ url_for('faculty_bp.view_class',
+                    class_id=class_data.class_id) }}"
+   class="btn btn-sm btn-outline-secondary">
+
+    Show Paginated
+
+</a>
+
+{% else %}
+
+<a href="{{ url_for('faculty_bp.view_class',
+                    class_id=class_data.class_id,
+                    show_all=1) }}"
+   class="btn btn-sm btn-outline-primary">
+
+    Show All Students
+
+</a>
+
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+{% if students %}
+
+
+<div class="table-responsive">
+
+
+<table class="table table-hover align-middle">
+
+
+<thead class="table-light">
+
+<tr>
+
+<th>Name</th>
+
+<th>Email</th>
+
+<th width="120">
+
+Action
+
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for student in students %}
+
+
+<tr>
+
+
+<td class="fw-semibold">
+
+{{ student.name }}
+
+</td>
+
+
+<td class="text-muted">
+
+{{ student.email }}
+
+</td>
+
+
+<td>
+
+
+<form method="POST"
+action="{{ url_for('faculty_bp.remove_student',
+class_id=class_data.class_id,
+student_id=student.user_id) }}">
+
+<button
+class="btn btn-sm btn-outline-danger"
+onclick="return confirm('Remove this student?')">
+
+Remove
+
+</button>
+
+</form>
+
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+{% else %}
+
+
+<p class="text-muted">
+
+No students enrolled yet.
+
+</p>
+
+
+{% endif %}
+
+
+
+<!-- ================= PAGINATION ================= -->
+
+{% if total_pages > 1 and not show_all %}
+
+
+<nav class="mt-3">
+
+
+<ul class="pagination justify-content-center">
+
+
+{% if page > 1 %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="{{ url_for('faculty_bp.view_class',
+class_id=class_data.class_id,
+page=page-1) }}">
+
+Previous
+
+</a>
+
+</li>
+
+{% endif %}
+
+
+
+{% for p in range(1, total_pages+1) %}
+
+<li class="page-item {% if p == page %}active{% endif %}">
+
+<a class="page-link"
+href="{{ url_for('faculty_bp.view_class',
+class_id=class_data.class_id,
+page=p) }}">
+
+{{ p }}
+
+</a>
+
+</li>
+
+{% endfor %}
+
+
+
+{% if page < total_pages %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="{{ url_for('faculty_bp.view_class',
+class_id=class_data.class_id,
+page=page+1) }}">
+
+Next
+
+</a>
+
+</li>
+
+{% endif %}
+
+
+</ul>
+
+
+</nav>
+
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

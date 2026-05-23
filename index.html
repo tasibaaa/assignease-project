@@ -1,0 +1,144 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+<!-- ================= HERO ================= -->
+
+<section class="hero-modern">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <!-- LEFT CONTENT -->
+            <div class="col-lg-6">
+                <h1 class="hero-title">
+                    Academic Workflow <br>
+                    Simplified.
+                </h1>
+
+                <p class="hero-subtitle mt-3">
+                    Submit, evaluate, and analyze assignments
+                    with an intelligent academic management system.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="/signup" class="btn-primary">
+                        Get Started
+                    </a><br><br>
+
+                    <a href="/login" class="btn-primary">
+                        Login
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- RIGHT SLIDING CARD -->
+            <div class="col-lg-6">
+                <div class="hero-card slide-in">
+                    <div class="hero-card-header">
+                        Faculty Dashboard
+                    </div>
+
+                    <div class="hero-card-body">
+                        <div class="mock-stat">
+                            <span>Total Submissions</span>
+                            <strong>128</strong>
+                        </div>
+
+                        <div class="mock-stat">
+                            <span>Graded</span>
+                            <strong>96</strong>
+                        </div>
+
+                        <div class="mock-stat">
+                            <span>High Plagiarism</span>
+                            <strong class="text-danger">7</strong>
+                        </div>
+
+                        <div class="mock-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- ================= FEATURES ================= -->
+
+<section class="features-section">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <h2 class="section-title">Powerful Academic Features</h2>
+            <p class="section-subtitle">
+                Designed for modern education systems.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="feature-card-modern">
+                    <div class="feature-icon">📤</div>
+                    <h5>Smart Submission</h5>
+                    <p>
+                        Secure PDF uploads with automatic deadline tracking
+                        and late submission detection.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card-modern">
+                    <div class="feature-icon">🔍</div>
+                    <h5>Plagiarism Checker</h5>
+                    <p>
+                        Built-in similarity detection ensures academic integrity
+                        across all submissions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card-modern">
+                    <div class="feature-icon">📊</div>
+                    <h5>Analytics Dashboard</h5>
+                    <p>
+                        Visual insights into grading, late submissions,
+                        and academic performance.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ================= TRUST SECTION ================= -->
+
+<section class="highlight-section">
+    <div class="container">
+
+        <div class="highlight-box">
+
+            <div class="highlight-content">
+                <h3>Built for Modern Academic Institutions</h3>
+                <p>
+                    AssignEase simplifies faculty workflows while providing students
+                    with a seamless digital submission experience.
+                </p>
+            </div>
+
+            <div class="highlight-action">
+                <a href="/signup" class="btn btn-primary btn-lg">
+                    Get Started
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

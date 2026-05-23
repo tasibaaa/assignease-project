@@ -1,0 +1,381 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<style>
+.submission-card {
+    border-radius: 18px;
+    padding: 24px;
+    background: linear-gradient(145deg,#ffffff,#f4f6f9);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    transition: 0.3s ease;
+}
+
+.submission-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.1);
+}
+
+.status-badge {
+    font-size:12px;
+    padding:6px 12px;
+    border-radius:30px;
+}
+</style>
+
+
+<div class="mb-3">
+<a href="{{ url_for('faculty_bp.view_class', class_id=class_id) }}"
+class="btn btn-outline-secondary btn-sm">
+← Back to Class
+</a>
+</div>
+
+
+<div class="submission-card mb-4">
+<h4 class="fw-semibold mb-0">Assignment Submissions</h4>
+</div>
+
+
+<!-- FILTER BAR -->
+
+<div class="submission-card mb-4">
+
+<form method="GET">
+
+<div class="row g-3 align-items-end">
+
+<div class="col-md-4">
+<label class="form-label">Search Student</label>
+<input type="text"
+name="search"
+value="{{ request.args.get('search','') }}"
+class="form-control"
+placeholder="Student name">
+</div>
+
+
+<div class="col-md-3">
+<label class="form-label">Submission Status</label>
+
+<select name="status" class="form-select">
+
+<option value="">All</option>
+
+<option value="submitted"
+{% if request.args.get('status')=='submitted' %}selected{% endif %}>
+Submitted
+</option>
+
+<option value="late_submission"
+{% if request.args.get('status')=='late_submission' %}selected{% endif %}>
+Late Submitted
+</option>
+
+<option value="graded"
+{% if request.args.get('status')=='graded' %}selected{% endif %}>
+Graded
+</option>
+
+<option value="resubmission_requested"
+{% if request.args.get('status')=='resubmission_requested' %}selected{% endif %}>
+Resubmission Requested
+</option>
+
+<option value="not_submitted"
+{% if request.args.get('status')=='not_submitted' %}selected{% endif %}>
+Not Submitted
+</option>
+
+</select>
+</div>
+
+
+<div class="col-md-3">
+<label class="form-label">Plagiarism Level</label>
+
+<select name="plagiarism" class="form-select">
+
+<option value="">All</option>
+
+<option value="high"
+{% if request.args.get('plagiarism')=='high' %}selected{% endif %}>
+High (70%+)
+</option>
+
+<option value="medium"
+{% if request.args.get('plagiarism')=='medium' %}selected{% endif %}>
+Medium (40–69%)
+</option>
+
+<option value="low"
+{% if request.args.get('plagiarism')=='low' %}selected{% endif %}>
+Low (&lt;40%)
+</option>
+
+</select>
+</div>
+
+
+<div class="col-md-2">
+<button class="btn btn-dark w-100">Filter</button>
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+
+
+<div class="submission-card">
+
+<h5 class="fw-semibold mb-4">Student Submissions</h5>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category,message in messages %}
+<div class="alert alert-{{category}}">
+{{message}}
+</div>
+{% endfor %}
+{% endwith %}
+
+
+
+{% for submission in submissions %}
+
+<div class="submission-card mb-4 bg-white">
+
+<!-- HEADER -->
+
+<div class="d-flex justify-content-between align-items-center flex-wrap">
+
+<h6 class="fw-semibold mb-0">
+{{ submission.name }}
+</h6>
+
+
+{% if submission.status=="graded" %}
+<span class="badge bg-success status-badge">
+Graded
+</span>
+
+{% elif submission.status=="resubmission_requested" %}
+<span class="badge bg-warning text-dark status-badge">
+Resubmission Required
+</span>
+
+{% elif submission.status=="late_submission" %}
+<span class="badge bg-danger status-badge">
+Late Submitted
+</span>
+
+{% elif submission.status=="submitted" %}
+<span class="badge bg-dark status-badge">
+Submitted
+</span>
+
+{% else %}
+<span class="badge bg-secondary status-badge">
+Not Submitted
+</span>
+{% endif %}
+
+</div>
+
+
+<hr>
+
+
+<p>
+<strong>Submitted At:</strong>
+
+{{ submission.submitted_at if submission.submitted_at else "— Not Submitted Yet —" }}
+
+</p>
+
+
+
+<!-- SIMILARITY SCORE -->
+
+{% if submission.similarity_score is not none %}
+
+<p>
+
+<strong>Similarity:</strong>
+
+<span class="
+{% if submission.similarity_score>=70 %}
+text-danger fw-semibold
+{% elif submission.similarity_score>=40 %}
+text-warning fw-semibold
+{% else %}
+text-success fw-semibold
+{% endif %}
+">
+
+{{ submission.similarity_score }}%
+
+</span>
+
+
+{% if submission.similarity_score>=70 %}
+<span class="badge bg-danger ms-2">
+High Plagiarism
+</span>
+{% endif %}
+
+</p>
+
+{% endif %}
+
+
+
+<!-- FILE BUTTON -->
+
+{% if submission.file_name %}
+
+<div class="mb-3">
+
+<a href="{{ url_for('student_bp.view_submission_file',
+filename=submission.file_name) }}"
+target="_blank"
+class="btn btn-outline-primary btn-sm">
+
+View Submitted PDF
+
+</a>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- IF GRADED -->
+
+{% if submission.status=="graded" %}
+
+<div class="mt-3 p-3 rounded bg-light">
+
+<p class="mb-1">
+<strong>Marks:</strong>
+{{ submission.marks }}
+</p>
+
+<p class="mb-1">
+<strong>Feedback:</strong>
+</p>
+
+<div class="p-2 rounded bg-white border-start border-4 border-primary">
+
+{{ submission.feedback }}
+
+</div>
+
+</div>
+
+
+
+<!-- IF RESUBMISSION REQUESTED -->
+
+{% elif submission.status=="resubmission_requested" %}
+
+<div class="mt-3 p-3 rounded bg-warning bg-opacity-25">
+
+<p class="mb-1">
+<strong>Feedback:</strong>
+</p>
+
+<div class="p-2 rounded bg-white border-start border-4 border-warning">
+
+{{ submission.feedback }}
+
+</div>
+
+</div>
+
+
+
+<!-- IF READY FOR GRADING -->
+
+{% elif submission.file_name %}
+
+<form method="POST"
+action="{{ url_for('faculty_bp.grade',
+submission_id=submission.submission_id) }}"
+class="mt-3">
+
+<div class="mb-2">
+
+<input type="number"
+name="marks"
+class="form-control"
+placeholder="Enter Marks"
+required>
+
+</div>
+
+
+<div class="mb-2">
+
+<textarea name="feedback"
+class="form-control"
+placeholder="Write feedback..."
+required></textarea>
+
+</div>
+
+
+<div class="d-flex gap-2">
+
+<button type="submit"
+name="action"
+value="finalize"
+class="btn btn-success btn-sm">
+
+Finalize Grade
+
+</button>
+
+
+<button type="submit"
+name="action"
+value="resubmit"
+class="btn btn-warning btn-sm">
+
+Request Resubmission
+
+</button>
+
+</div>
+
+</form>
+
+{% endif %}
+
+</div>
+
+
+
+{% else %}
+
+<div class="text-center py-4">
+
+<h6 class="text-muted">
+No submissions found
+</h6>
+
+<p class="small text-muted">
+Try changing filters to view students.
+</p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card-modern">
+
+        <h4 class="fw-semibold mb-3">
+            Notifications
+        </h4>
+
+        {% if notifications %}
+
+            {% for n in notifications %}
+
+            <div class="border-bottom py-2">
+
+                <a href="{{ n.link }}"
+                   class="text-decoration-none">
+
+                    {{ n.message }}
+
+                </a>
+
+                <div class="small text-muted">
+
+                    {{ n.created_at }}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+        <p class="text-muted">
+            No notifications yet.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

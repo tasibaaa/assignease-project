@@ -1,0 +1,309 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+    <!-- SEARCH + FILTER BAR -->
+    <div class="card-modern mb-4">
+
+        <form method="GET" action="/faculty/classes">
+
+            <div class="d-flex gap-3 align-items-center">
+
+                <h5 class="fw-semibold mb-0 me-auto">
+                    My Classes
+                </h5>
+
+                <input
+                    type="text"
+                    name="search"
+                    id="classSearch"
+                    value="{{ search or '' }}"
+                    placeholder="Search classes..."
+                    class="form-control w-25">
+
+                <select name="status" class="form-select w-auto">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="active"
+                        {% if status=="active" %}selected{% endif %}>
+                        Active
+                    </option>
+
+                    <option value="archived"
+                        {% if status=="archived" %}selected{% endif %}>
+                        Archived
+                    </option>
+
+                </select>
+
+                <button type="submit" class="btn btn-dark">
+                    Filter
+                </button>
+
+                <a href="/faculty/classes"
+                   class="btn btn-outline-secondary">
+                    Reset
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- CREATE CLASS -->
+    <div class="card-modern mb-4">
+
+        <h6 class="fw-semibold mb-3">
+            Create New Class
+        </h6>
+
+        <form method="POST" action="/faculty/create-class">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <input
+                        type="text"
+                        name="class_name"
+                        placeholder="Class Name"
+                        class="form-control"
+                        required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <input
+                        type="text"
+                        name="academic_year"
+                        placeholder="Academic Year"
+                        class="form-control">
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <select name="semester" class="form-select">
+
+                        <option value="">
+                            Select Semester
+                        </option>
+
+                        <option>Semester 1</option>
+                        <option>Semester 2</option>
+                        <option>Semester 3</option>
+                        <option>Semester 4</option>
+                        <option>Semester 5</option>
+                        <option>Semester 6</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <textarea
+                name="description"
+                placeholder="Description"
+                class="form-control mb-3"></textarea>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Create Class
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- CLASS GRID -->
+    <div class="row" id="classGrid">
+
+        {% for class in classes %}
+
+        <div class="col-md-4 mb-4 class-card">
+
+            <div class="card-modern h-100 {% if class.status == 'archived' %}opacity-50{% endif %}">
+
+                <div class="d-flex justify-content-between">
+
+                    <h6 class="fw-semibold class-name">
+                        {{ class.class_name }}
+                    </h6>
+
+                    <span class="badge
+                        {% if class.status == 'active' %}
+                            bg-dark
+                        {% else %}
+                            bg-secondary
+                        {% endif %}
+                    ">
+                        {{ class.status|capitalize }}
+                    </span>
+
+                </div>
+
+                <p class="text-muted small mb-1">
+                    Code: {{ class.class_code }}
+                </p>
+
+                <div class="d-flex gap-4 small text-muted mb-2">
+
+                    <span>
+                        👨‍🎓 {{ class.student_count }} Students
+                    </span>
+
+                    <span>
+                        📝 {{ class.assignment_count }} Assignments
+                    </span>
+
+                </div>
+
+                {% if class.academic_year %}
+                <p class="small text-muted mb-1">
+                    {{ class.academic_year }} | {{ class.semester }}
+                </p>
+                {% endif %}
+
+                {% if class.description %}
+                <p class="small text-muted">
+                    {{ class.description }}
+                </p>
+                {% endif %}
+
+
+                <!-- BUTTONS -->
+                <div class="d-flex gap-2 mt-3">
+
+                    <a
+                        href="/faculty/class/{{ class.class_id }}"
+                        class="btn btn-outline-dark btn-sm">
+                        Manage
+                    </a>
+
+
+                    {% if class.status == "active" %}
+
+                    <!-- ARCHIVE BUTTON -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('faculty_bp.archive_class',
+                        class_id=class.class_id) }}"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Archive this class?')">
+
+                            Archive
+
+                        </button>
+
+                    </form>
+
+                    {% else %}
+
+                    <!-- RESTORE BUTTON -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('faculty_bp.archive_class',
+                        class_id=class.class_id) }}"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-success btn-sm">
+
+                            Restore
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- DELETE BUTTON -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('faculty_bp.delete_class',
+                        class_id=class.class_id) }}"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Delete permanently? This cannot be undone.')">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <p class="text-muted">
+            No classes created yet.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.getElementById("classSearch")
+.addEventListener("input", function () {
+
+    const value = this.value.toLowerCase();
+
+    const cards = document.querySelectorAll(".class-card");
+
+    cards.forEach(card => {
+
+        const name =
+        card.querySelector(".class-name")
+        .textContent.toLowerCase();
+
+        card.style.display =
+        name.includes(value) ? "block" : "none";
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

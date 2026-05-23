@@ -1,0 +1,32 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<h3 class="mb-4">Notifications</h3>
+
+{% if notifications %}
+
+    {% for notification in notifications %}
+
+    <div class="card mb-3 p-3 shadow-sm d-flex justify-content-between align-items-center flex-row">
+
+        <span>{{ notification.message }}</span>
+
+        <a href="{{ notification.link if notification.link else url_for('student_bp.dashboard') }}"
+           class="btn btn-sm btn-outline-dark">
+           View
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="alert alert-info">
+    No notifications yet
+</div>
+
+{% endif %}
+
+{% endblock %}

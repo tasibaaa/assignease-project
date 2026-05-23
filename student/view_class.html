@@ -1,0 +1,67 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% block content %}
+
+<div class="card-modern">
+    <h4 class="fw-semibold mb-4">Assignments</h4>
+
+    {% for assignment in assignments %}
+
+    <div class="card-modern mb-4">
+
+        <h6 class="fw-semibold">{{ assignment.title }}</h6>
+        <p>{{ assignment.description }}</p>
+
+        <p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
+
+        <div id="timer{{assignment.assignment_id}}" class="text-primary mb-2"></div>
+
+        <!-- STATUS BADGE -->
+        {% if assignment.submission_id %}
+            {% if assignment.submitted_at and assignment.submitted_at > assignment.deadline %}
+                <span class="badge bg-danger mb-2">Late Submitted</span>
+            {% else %}
+                <span class="badge bg-success mb-2">Submitted</span>
+            {% endif %}
+        {% else %}
+            <span class="badge bg-warning mb-2">Pending</span>
+        {% endif %}
+
+        <!-- SUBMISSION FORM OR MARKS -->
+        {% if not assignment.marks %}
+        <form method="POST"
+              action="/student/submit/{{assignment.assignment_id}}"
+              enctype="multipart/form-data">
+
+            <div class="mb-2">
+                <input type="file" name="file" class="form-control" required>
+            </div>
+
+            <button class="btn btn-primary btn-sm" onclick="return confirm('Replace previous submission?')">
+                {% if assignment.submission_id %}
+                    Replace Submission
+                {% else %}
+                    Submit Assignment
+                {% endif %}
+            </button>
+
+        </form>
+        {% else %}
+            <div class="mt-2">
+                <strong>Marks:</strong> {{ assignment.marks }}
+            </div>
+        {% endif %}
+
+        <script>
+            startCountdown("{{assignment.deadline}}", "timer{{assignment.assignment_id}}");
+        </script>
+
+    </div>
+
+    {% else %}
+        <p class="text-muted">No assignments available.</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

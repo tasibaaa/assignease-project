@@ -1,0 +1,169 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<!-- HEADER -->
+<div class="card-modern mb-4 p-4">
+    <h4 class="fw-bold">Student Dashboard</h4>
+    <p class="text-muted mb-0">
+        Welcome back, {{ session.get('name') }} 👋
+    </p>
+</div>
+
+<!-- STATS -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="card-modern text-center p-4 shadow-sm">
+            <h6 class="text-muted">Total Classes</h6>
+            <h3 class="fw-bold">{{ total_classes }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern text-center p-4 shadow-sm">
+            <h6 class="text-muted">Total Assignments</h6>
+            <h3 class="fw-bold">{{ total_assignments }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern text-center p-4 shadow-sm">
+            <h6 class="text-muted">Pending</h6>
+            <h3 class="fw-bold text-danger">{{ pending_assignments }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern text-center p-4 shadow-sm">
+            <h6 class="text-muted">Graded</h6>
+            <h3 class="fw-bold text-success">{{ graded }}</h3>
+        </div>
+    </div>
+
+</div>
+
+<!-- ML SECTION -->
+<div class="row g-4 mb-4">
+
+    <!-- Performance Risk -->
+    <div class="col-md-6">
+        <div class="card-modern text-center p-4 shadow-sm">
+
+            <small class="text-muted">Performance Risk</small>
+
+            {% if risk_level == "Low Risk" %}
+                <h3 class="fw-bold text-success mt-2">🟢 </span>
+                    {{ risk_level }}</h3>
+
+            {% elif risk_level == "Medium Risk" %}
+                <h3 class="fw-bold text-warning mt-2">🟠</span> 
+                    {{ risk_level }}</h3>
+
+            {% elif risk_level == "High Risk" %}
+                <h3 class="fw-bold text-danger mt-2">🔴 </span>
+                    {{ risk_level }}</h3>
+
+            {% else %}
+                <h5 class="text-muted mt-2">{{ risk_level }}</h5>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Predicted Score -->
+    <div class="col-md-6">
+        <div class="card-modern text-center p-4 shadow-sm">
+
+            <small class="text-muted">Predicted Next Score</small>
+
+            {% if next_score_prediction %}
+                <h3 class="fw-bold text-primary mt-2">
+                    {{ next_score_prediction|round(1) }} / 5
+                </h3>
+                <small class="text-muted">
+                    Based on past performance trend
+                </small>
+            {% else %}
+                <h6 class="text-muted mt-3">
+                    Need at least 2 graded assignments
+                </h6>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<!-- AI RECOMMENDATION -->
+{% if recommendation %}
+<div class="card-modern mb-4 p-4 shadow-sm">
+    <h5 class="fw-semibold">Recommendation</h5>
+    <p class="mb-0 text-muted">
+        {{ recommendation }}
+    </p>
+</div>
+{% endif %}
+
+<!-- UPCOMING DEADLINES -->
+<div class="card-modern mb-4 p-4 shadow-sm">
+    <h5 class="fw-semibold mb-3">Upcoming Deadlines</h5>
+
+    {% if upcoming %}
+        {% for assignment in upcoming %}
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+            <div>
+                <strong>{{ assignment.title }}</strong>
+                <div class="text-muted small">
+                    Deadline: {{ assignment.deadline }}
+                </div>
+            </div>
+
+            <div class="text-end">
+                <a href="{{ url_for('student_bp.view_assignment',
+                                     assignment_id=assignment.assignment_id) }}"
+                   class="btn btn-sm btn-outline-dark mt-2">
+                    View
+                </a>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No upcoming assignments.</p>
+    {% endif %}
+</div>
+
+<!-- RECENTLY GRADED -->
+<div class="card-modern mb-4 p-4 shadow-sm">
+    <h5 class="fw-semibold mb-3">Recently Graded</h5>
+
+    {% if graded_list %}
+        {% for item in graded_list %}
+
+        <div class="d-flex justify-content-between border-bottom py-2">
+
+            <div>
+                <strong>{{ item.title }}</strong>
+                <div class="small text-muted">
+                    Submitted: {{ item.submitted_at }}
+                </div>
+            </div>
+
+            <div>
+                <span class="badge bg-success">
+                    {{ item.marks }} / 5
+                </span>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No graded assignments yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

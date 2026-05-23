@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-header text-center">
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue to AssignEase</p>
+        </div>
+
+        <form method="POST">
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="loginPassword" class="form-control" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                Sign In
+            </button>
+
+            <div class="text-center" style="font-size: 14px;">
+                Don’t have an account? 
+                <a href="/signup" style="font-weight: 500;">Create one</a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+session.permanent = True
+document.getElementById("toggleLoginPassword").addEventListener("click", function () {
+    const input = document.getElementById("loginPassword");
+    input.type = input.type === "password" ? "text" : "password";
+});
+
+</script>
+
+{% endblock %}
