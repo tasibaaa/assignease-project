@@ -32,7 +32,23 @@
    python app.py
 
 ## 📸 Screenshots
-(Add screenshots here)
 
+### 🔐 Login Page
+![Login](login.png)
+
+### 🏠 Home / Dashboard
+![Home](home.png)
+
+### 🎓 Student Dashboard
+![Student Dashboard](student-dashboard.png)
+
+### 📚 Student Assignments
+![Assignments](student-assignmnets.png)
+
+### 🧑‍🏫 Faculty Dashboard
+![Faculty](faculty-dashboard(2).png)
+
+### 🔔 Notifications
+![Notifications](notifications.png)
 ## 📌 Note
 Uploads folder is excluded as it contains user-generated data.
